@@ -78,6 +78,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
+                    <!-- ici quand on lance l'app , il cherche cet chemin et l'execute -->
                     <mainClass>com.sonarproject.front.Interface</mainClass>
                 </configuration>
             </plugin>

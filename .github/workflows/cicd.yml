@@ -86,7 +86,38 @@ jobs:
       run: mvn jacoco:report
 
     # ------------------------------------------------------
-    # Étape 7 : Upload du rapport JaCoCo comme artefact
+    # Étape 7 : Analyse SonarCloud
+    #
+    # ⚠️ IMPORTANT :
+    # Cette étape utilise SonarCloud pour analyser :
+    #   - Bugs
+    #   - Code Smells
+    #   - Vulnérabilités
+    #   - Couverture JaCoCo
+    #
+    # Elle nécessite :
+    #   ✔ Un token SONAR_TOKEN dans GitHub Secrets
+    #   ✔ Que Automatic Analysis soit désactivé dans SonarCloud
+    #   ✔ Le fichier sonar-project.properties à la racine du projet
+    #
+    # Plugin GitHub SonarCloud officiel : v2 (dernière version à ce jour)
+    # ------------------------------------------------------
+    # @ IRETO IHANY NO HOVAINA 
+    # -Dsonar.projectKey=Lee-Rudy_SonarTest
+    # -Dsonar.organization=lee-rudy
+
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@v2
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      with:
+        args: >
+          -Dsonar.projectKey=Lee-Rudy_SonarTest
+          -Dsonar.organization=lee-rudy
+          -Dsonar.host.url=https://sonarcloud.io
+
+    # ------------------------------------------------------
+    # Étape 8 : Upload du rapport JaCoCo comme artefact
     #
     # actions/upload-artifact@v4 est OBLIGATOIRE car :
     # ⭐ v3 a été dépréciée et désactivée en 2024

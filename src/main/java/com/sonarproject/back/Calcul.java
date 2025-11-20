@@ -4,6 +4,10 @@ public class Calcul
 {
     double champA;
     double champB;
+    double champC;
+    double champ_D;
+
+
 
     //constructor
     public Calcul (double champA, double champB)

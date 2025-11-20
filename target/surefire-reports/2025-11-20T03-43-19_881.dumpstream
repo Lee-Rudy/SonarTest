@@ -1,0 +1,5 @@
+# Created at 2025-11-20T03:43:25.330
+Boot Manifest-JAR contains absolute paths in classpath 'D:\MCCI\Cours\Architecture logiciel\projet perso\test sonarcloud\SonarTest\target\test-classes'
+Hint: <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
+'other' has different root
+

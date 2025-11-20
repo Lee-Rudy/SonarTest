@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Interface.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">SonarTest</a> &gt; <a href="index.source.html" class="el_package">com.sonarproject.front</a> &gt; <span class="el_source">Interface.java</span></div><h1>Interface.java</h1><pre class="source lang-java linenums">package com.sonarproject.front;
+
+import com.sonarproject.back.Calcul;
+
+import javax.swing.*;
+import java.awt.*;
+
+<span class="nc" id="L8">public class Interface </span>
+{
+
+    // détails : pour executer le code sous maven il y plusieurs méthodes , 3 méthodes
+    // méthode 1 :  soit on Run dans le main avec le btn &quot;play&quot;
+
+    // méthode 2 : (celle que j'utilise pour ce projet) -&gt; lancer cette commande :
+    // mvn compile exec:java -Dexec.mainClass=&quot;com.sonarproject.front.Interface&quot;
+    // pour que ça fonctionne , il faut ajouter un plugin dans le &lt;Plugins&gt; de pom.xml
+    // pour executer :
+    //-&gt; mvn exec:java  (dans le plugin il y a &lt;mainClass&gt; , maven le cherche et trouve le main et lance l'app) --&gt; prend du temps lors de la compilation 
+    // -&gt; mvn exec:java -Dexec.mainClass=&quot;com.sonarproject.front.Interface&quot;  (si on veut le lancer et le préciser où se trouve main) --&gt; plus rapide à lancer
+
+
+
+    //méthode 3 : créer un fichier jar
+
+
+    public static void main(String[] args) 
+    {
+
+        // Création de la fenêtre
+<span class="nc" id="L30">        JFrame frame = new JFrame(&quot;Calculatrice - SonarTest&quot;);</span>
+<span class="nc" id="L31">        frame.setSize(400, 250);</span>
+<span class="nc" id="L32">        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);</span>
+<span class="nc" id="L33">        frame.setLayout(new GridLayout(4, 2, 10, 10));</span>
+
+        // Champs de saisie
+<span class="nc" id="L36">        JLabel labelA = new JLabel(&quot;Champ A :&quot;);</span>
+<span class="nc" id="L37">        JTextField fieldA = new JTextField();</span>
+
+<span class="nc" id="L39">        JLabel labelB = new JLabel(&quot;Champ B :&quot;);</span>
+<span class="nc" id="L40">        JTextField fieldB = new JTextField();</span>
+
+<span class="nc" id="L42">        JButton btnCalculer = new JButton(&quot;Additionner&quot;);</span>
+<span class="nc" id="L43">        JLabel labelResult = new JLabel(&quot;Résultat : ---&quot;);</span>
+
+        // Ajout des composants à la fenêtre
+<span class="nc" id="L46">        frame.add(labelA);</span>
+<span class="nc" id="L47">        frame.add(fieldA);</span>
+<span class="nc" id="L48">        frame.add(labelB);</span>
+<span class="nc" id="L49">        frame.add(fieldB);</span>
+<span class="nc" id="L50">        frame.add(btnCalculer);</span>
+<span class="nc" id="L51">        frame.add(labelResult);</span>
+
+<span class="nc" id="L53">        frame.setVisible(true);</span>
+
+        // Événement du bouton
+<span class="nc" id="L56">        btnCalculer.addActionListener(e -&gt; {</span>
+            try 
+            {
+<span class="nc" id="L59">                double a = Double.parseDouble(fieldA.getText());</span>
+<span class="nc" id="L60">                double b = Double.parseDouble(fieldB.getText());</span>
+
+                // Utilisation de ta classe Calcul
+<span class="nc" id="L63">                Calcul calc = new Calcul(a, b);</span>
+<span class="nc" id="L64">                double resultat = calc.Addition(a, b);</span>
+
+<span class="nc" id="L66">                labelResult.setText(&quot;Résultat : &quot; + resultat);</span>
+
+            } 
+<span class="nc" id="L69">            catch (NumberFormatException ex) </span>
+            {
+<span class="nc" id="L71">                JOptionPane.showMessageDialog(frame,</span>
+                        &quot;Veuillez entrer des nombres valides.&quot;,
+                        &quot;Erreur de saisie&quot;,
+                        JOptionPane.ERROR_MESSAGE);
+<span class="nc" id="L75">            }</span>
+<span class="nc" id="L76">        });</span>
+<span class="nc" id="L77">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

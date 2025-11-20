@@ -1,0 +1,132 @@
+# ----------------------------------------------------------
+#   WORKFLOW : CI/CD Java + Maven + JUnit + JaCoCo
+#   Objectif : Compiler, tester, et générer le rapport JaCoCo
+# ----------------------------------------------------------
+
+name: Java CI   # Nom du workflow visible dans GitHub Actions
+
+# ----------------------------------------------------------
+# 1) Déclencheurs du workflow
+#    → Le workflow se lance automatiquement lorsque :
+#      - tu fais un push sur la branche "main"
+#      - tu ouvres une pull request vers "main"
+# ----------------------------------------------------------
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+# ----------------------------------------------------------
+# 2) Définition des jobs
+#    Ici, un seul job : build-and-test
+# ----------------------------------------------------------
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest  
+    # Le job tourne sur la dernière version stable d'Ubuntu
+
+    # Liste des étapes à exécuter dans ce job
+    steps:
+
+    # ------------------------------------------------------
+    # Étape 1 : Récupération du code source depuis GitHub
+    # actions/checkout@v4 → la version actuelle.
+    # ------------------------------------------------------
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # ------------------------------------------------------
+    # Étape 2 : Installation de Java 17 sur la machine
+    # actions/setup-java@v4 est la version récente.
+    # distribution "temurin" = version officielle Adoptium
+    # ------------------------------------------------------
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    # ------------------------------------------------------
+    # Étape 3 : Mise en cache du dossier ~/.m2
+    # Cela accélère les builds Maven car les dépendances
+    # ne sont pas retéléchargées à chaque exécution.
+    # actions/cache@v4 → version récente.
+    # ------------------------------------------------------
+    - name: Cache Maven packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.m2
+        # La clé dépend du pom.xml → si le pom change, le cache change
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-m2
+
+    # ------------------------------------------------------
+    # Étape 4 : Build Maven
+    # mvn clean verify → compile tout le projet + vérifie
+    # que tout est correct (compilation, dépendances...)
+    # ------------------------------------------------------
+    - name: Build with Maven
+      run: mvn -B clean verify
+
+    # ------------------------------------------------------
+    # Étape 5 : Exécution des tests JUnit
+    # mvn test → déclenche les tests dans src/test/java
+    # ------------------------------------------------------
+    - name: Run tests
+      run: mvn test
+
+    # ------------------------------------------------------
+    # Étape 6 : Génération du rapport de couverture JaCoCo
+    # Le plugin configuré dans pom.xml produit :
+    # target/site/jacoco/index.html
+    # ------------------------------------------------------
+    - name: Generate Jacoco report
+      run: mvn jacoco:report
+
+    # ------------------------------------------------------
+    # Étape 7 : Analyse SonarCloud
+    #
+    # ⚠️ IMPORTANT :
+    # Cette étape utilise SonarCloud pour analyser :
+    #   - Bugs
+    #   - Code Smells
+    #   - Vulnérabilités
+    #   - Couverture JaCoCo
+    #
+    # Elle nécessite :
+    #   ✔ Un token SONAR_TOKEN dans GitHub Secrets
+    #   ✔ Que Automatic Analysis soit désactivé dans SonarCloud
+    #   ✔ Le fichier sonar-project.properties à la racine du projet
+    #
+    # Plugin GitHub SonarCloud officiel : v2 (dernière version à ce jour)
+    # ------------------------------------------------------
+    # CE QUE JE DOIS CHANGER
+    # -Dsonar.projectKey=Lee-Rudy_SonarTest
+    # -Dsonar.organization=lee-rudy
+
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@v2
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      with:
+        args: >
+          -Dsonar.projectKey=Lee-Rudy_SonarTest
+          -Dsonar.organization=lee-rudy
+          -Dsonar.host.url=https://sonarcloud.io
+
+    # ------------------------------------------------------
+    # Étape 8 : Upload du rapport JaCoCo comme artefact
+    #
+    # actions/upload-artifact@v4 est OBLIGATOIRE car :
+    # ⭐ v3 a été dépréciée et désactivée en 2024
+    #   → GitHub refuse automatiquement les workflows en v3
+    #
+    # Le rapport sera téléchargeable dans GitHub Actions.
+    # ------------------------------------------------------
+    - name: Upload Jacoco HTML report
+      uses: actions/upload-artifact@v4   # VERSION RÉCENTE NON DÉPRÉCIÉE
+      with:
+        name: jacoco-report              # Nom de l’artefact
+        path: target/site/jacoco         # Chemin du rapport JaCoCo

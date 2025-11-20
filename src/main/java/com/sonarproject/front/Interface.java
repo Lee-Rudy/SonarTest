@@ -15,7 +15,10 @@ public class Interface
     // mvn compile exec:java -Dexec.mainClass="com.sonarproject.front.Interface"
     // pour que ça fonctionne , il faut ajouter un plugin dans le <Plugins> de pom.xml
     // pour executer :
-    //-> mvn exec:java  (dans le plugin il y a <mainClass> , maven le cherche et trouve le main et lance l'app) --> prend du temps lors de la compilation 
+    
+    //-> mvn exec:java  
+    
+    //(dans le plugin il y a <mainClass> , maven le cherche et trouve le main et lance l'app) --> prend du temps lors de la compilation 
     // -> mvn exec:java -Dexec.mainClass="com.sonarproject.front.Interface"  (si on veut le lancer et le préciser où se trouve main) --> plus rapide à lancer
 
 
